@@ -28,7 +28,7 @@ $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "HH:mm:ss") '
 $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Yellow
 $GitPromptSettings.DefaultPromptPath.ForegroundColor = 'DarkGray'
 
-# Add location to prompt, so duplicate tab works in PS. Call with `<C-S-d>`.
+# Add location to prompt, so duplicate tab works in PS. Duplicate tab with `<C-S-d>`.
 # [ref](https://learn.microsoft.com/en-us/windows/terminal/tutorials/new-tab-same-directoryhttps://learn.microsoft.com/en-us/windows/terminal/tutorials/new-tab-same-directoryhttps://learn.microsoft.com/en-us/windows/terminal/tutorials/new-tab-same-directory)
 function prompt
 {
@@ -42,18 +42,11 @@ function prompt
     $prompt += "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\"
   }
 
-  $prompt
-}
+  if (isAdmin) {
+    $prompt = "[ADMIN] " + $prompt
+  }
 
-# Set default folder to git, if it exists.
-$folder = 'D:\git\'
-if (Test-Path -Path $Folder) {
-  Set-Location $folder
-} else { 
-  $folder = 'C:\git\'
-  if (Test-Path -Path $Folder) {
-    Set-Location $folder
-  } 
+  $prompt
 }
 
 # Init zoxide in PS
