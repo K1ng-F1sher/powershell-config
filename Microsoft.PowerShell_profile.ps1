@@ -46,11 +46,13 @@ function prompt {
   if ($loc.Provider.Name -eq "FileSystem") {
     Write-Host "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\" -NoNewLine 
   }
-  Write-Host " $loc$('>' * ($nestedPromptLevel + 1))" -NoNewLine ` -ForegroundColor "DarkGray"
+  Write-Host " $loc" -NoNewLine -ForegroundColor "DarkGray"
 
   if (Test-Path .git) {
     Write-BranchName
   }
+
+  Write-Host $('>' * ($nestedPromptLevel + 1)) -NoNewLine 
 
   # Need to return non-empty string in order not to spawn another `PS` at the prompt.
   return " ";
