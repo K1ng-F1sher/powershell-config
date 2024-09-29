@@ -1,34 +1,4 @@
-# Check whether the following packages are installed.
-# See `C:\ProgramData\chocolatey\bin` for all installed packages.
-$check_installed = "choco.exe","git.exe","rg.exe","nvim.exe", "jq.exe", "zoxide.exe", "fzf.exe"
-# carapace is installed with scoop
-
-foreach ($package in $check_installed) {
-    if (!(Get-Command -Name $package -ErrorAction SilentlyContinue)) {
-      Write-Host "$($package) not available"
-  }
-}
-
-# Aliases
-Set-Alias -Name vim -Value nvim
-Set-Alias -Name cd -Value z -Option AllScope
-Set-Alias -Name ex -Value explorer
-
-# Carapace options
-Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
-Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
-carapace _carapace | Out-String | Invoke-Expression
-
-# Show history
-# FYI: History mode can be toggled with `F2`.
-Set-PSReadLineOption -PredictionViewStyle ListView
-# Scroll through history suggestions with `Ctrl+n` and `Ctrl+p` key combinations.
-Set-PSReadLineKeyHandler -Chord Ctrl+n -Function NextHistory 
-Set-PSReadLineKeyHandler -Chord Ctrl+p -Function PreviousHistory 
-
-# Init zoxide in PS
-Invoke-Expression (& { (zoxide init powershell | Out-String) })
-
+# Set prompt before anything else
 function prompt {
   $IsAdmin = IsAdmin
 
@@ -64,23 +34,83 @@ function IsAdmin {
 }
 
 function Write-BranchName () {
-    try {
-        $branch = git rev-parse --abbrev-ref HEAD
+  try {
+    $branch = git rev-parse --abbrev-ref HEAD
 
-        Write-Host " [" -ForegroundColor "Yellow" -NoNewline 
-        if ($branch -eq "HEAD") {
-            # we're probably in detached HEAD state, so print the SHA
-            $branch = git rev-parse --short HEAD
-            Write-Host "$branch" -ForegroundColor "Red" -NoNewline 
-        }
-        else {
-            # we're on an actual branch, so print it
-            Write-Host "$branch" -ForegroundColor "Cyan" -NoNewline 
-        }
-    } catch {
-        # we'll end up here if we're in a newly initiated git repo
-        Write-Host "no branches" -ForegroundColor "Yellow" -NoNewline 
+    Write-Host " [" -ForegroundColor "Yellow" -NoNewline 
+    if ($branch -eq "HEAD") {
+      # we're probably in detached HEAD state, so print the SHA
+      $branch = git rev-parse --short HEAD
+      Write-Host "$branch" -ForegroundColor "Red" -NoNewline 
+    } else {
+      # we're on an actual branch, so print it
+      Write-Host "$branch" -ForegroundColor "Cyan" -NoNewline 
     }
+  } catch {
+    # we'll end up here if we're in a newly initiated git repo
+    Write-Host "no branches" -ForegroundColor "Yellow" -NoNewline 
+  }
 
-    Write-Host "]" -ForegroundColor "Yellow" -NoNewline 
+  Write-Host "]" -ForegroundColor "Yellow" -NoNewline 
 }
+
+# Lazy (or deferred) load slow modules below.
+# All code below is copied from:
+# https://fsackur.github.io/2023/11/20/Deferred-profile-loading-for-better-performance/
+$Deferred = {
+  . "$HOME\Documents\PowerShell\console.ps1"
+}
+
+# https://seeminglyscience.github.io/powershell/2017/09/30/invocation-operators-states-and-scopes
+$GlobalState = [psmoduleinfo]::new($false)
+$GlobalState.SessionState = $ExecutionContext.SessionState
+
+# to run our code asynchronously
+$Runspace = [runspacefactory]::CreateRunspace($Host)
+$Powershell = [powershell]::Create($Runspace)
+$Runspace.Open()
+$Runspace.SessionStateProxy.PSVariable.Set('GlobalState', $GlobalState)
+
+# ArgumentCompleters are set on the ExecutionContext, not the SessionState
+# Note that $ExecutionContext is not an ExecutionContext, it's an EngineIntrinsics 😡
+$Private = [Reflection.BindingFlags]'Instance, NonPublic'
+$ContextField = [Management.Automation.EngineIntrinsics].GetField('_context', $Private)
+$Context = $ContextField.GetValue($ExecutionContext)
+
+# Get the ArgumentCompleters. If null, initialise them.
+$ContextCACProperty = $Context.GetType().GetProperty('CustomArgumentCompleters', $Private)
+$ContextNACProperty = $Context.GetType().GetProperty('NativeArgumentCompleters', $Private)
+$CAC = $ContextCACProperty.GetValue($Context)
+$NAC = $ContextNACProperty.GetValue($Context)
+if ($null -eq $CAC) {
+  $CAC = [Collections.Generic.Dictionary[string, scriptblock]]::new()
+  $ContextCACProperty.SetValue($Context, $CAC)
+}
+if ($null -eq $NAC) {
+  $NAC = [Collections.Generic.Dictionary[string, scriptblock]]::new()
+  $ContextNACProperty.SetValue($Context, $NAC)
+}
+
+# Get the AutomationEngine and ExecutionContext of the runspace
+$RSEngineField = $Runspace.GetType().GetField('_engine', $Private)
+$RSEngine = $RSEngineField.GetValue($Runspace)
+$EngineContextField = $RSEngine.GetType().GetFields($Private) | Where-Object {$_.FieldType.Name -eq 'ExecutionContext'}
+$RSContext = $EngineContextField.GetValue($RSEngine)
+
+# Set the runspace to use the global ArgumentCompleters
+$ContextCACProperty.SetValue($RSContext, $CAC)
+$ContextNACProperty.SetValue($RSContext, $NAC)
+
+$Wrapper = {
+  # Without a sleep, you get issues:
+  #   - occasional crashes
+  #   - prompt not rendered
+  #   - no highlighting
+  # Assumption: this is related to PSReadLine.
+  # 20ms seems to be enough on my machine, but let's be generous - this is non-blocking
+  Start-Sleep -Milliseconds 200
+
+  . $GlobalState {. $Deferred; Remove-Variable Deferred}
+}
+
+$null = $Powershell.AddScript($Wrapper.ToString()).BeginInvoke()
