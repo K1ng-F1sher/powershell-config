@@ -12,7 +12,7 @@ function prompt {
   $host.UI.RawUI.WindowTitle = $IsAdmin ? "PS7 [ADMIN] | " : "PS7 | "; 
   $host.UI.RawUI.WindowTitle += $loc 
 
-  Write-Host $date -NoNewLine -ForegroundColor "Yellow"
+  Write-Host $date -NoNewLine -ForegroundColor "DarkYellow"
   if ($loc.Provider.Name -eq "FileSystem") {
     Write-Host "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\" -NoNewLine 
   }
@@ -34,6 +34,7 @@ function IsAdmin {
 }
 
 function Write-BranchName () {
+  # TODO: split getting the branch and writing the prompt into two separate parts.
   try {
     $branch = git rev-parse --abbrev-ref HEAD
 
