@@ -2,6 +2,7 @@
 # See `C:\ProgramData\chocolatey\bin` for all installed packages.
 $check_installed = "choco.exe","git.exe","rg.exe","nvim.exe", "jq.exe", "zoxide.exe", "fzf.exe"
 # carapace is installed with scoop
+# check import ps fzf
 
 foreach ($package in $check_installed) {
   if (!(Get-Command -Name $package -ErrorAction SilentlyContinue)) {
