@@ -1,8 +1,7 @@
 # Check whether the following packages are installed.
 # See `C:\ProgramData\chocolatey\bin` for all installed packages.
 $check_installed = "choco.exe","git.exe","rg.exe","nvim.exe", "jq.exe", "zoxide.exe", "fzf.exe"
-# carapace is installed with scoop
-# check import ps fzf
+# carapace, PsFzf are installed with scoop
 
 foreach ($package in $check_installed) {
   if (!(Get-Command -Name $package -ErrorAction SilentlyContinue)) {
@@ -25,6 +24,7 @@ Set-PSReadLineOption -PredictionViewStyle ListView
 Set-PSReadLineKeyHandler -Chord Ctrl+n -Function NextHistory 
 Set-PSReadLineKeyHandler -Chord Ctrl+p -Function PreviousHistory 
 
+# Open PS fzf with <C-t>
 Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' 
 
 # Init zoxide in PS, then set alias.

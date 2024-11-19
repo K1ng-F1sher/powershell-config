@@ -13,15 +13,12 @@ function prompt {
   $host.UI.RawUI.WindowTitle += $loc 
 
   Write-Host $date -NoNewLine -ForegroundColor "DarkYellow"
+  # Set the path in the prompt (invisible), so <C-S-d> and <Alt-S-+> work.
   if ($loc.Provider.Name -eq "FileSystem") {
     Write-Host "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\" -NoNewLine 
   }
   Write-Host " $loc" -NoNewLine -ForegroundColor "DarkGray"
-
-  if (Test-Path .git) {
-    Write-BranchName
-  }
-
+  Write-BranchName
   Write-Host $('>' * ($nestedPromptLevel + 1)) -NoNewLine 
 
   # Need to return non-empty string in order not to spawn another `PS` at the prompt.
@@ -33,26 +30,28 @@ function IsAdmin {
   (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)  
 }
 
-function Write-BranchName () {
+function Write-BranchName {
   # TODO: split getting the branch and writing the prompt into two separate parts.
   try {
     $branch = git rev-parse --abbrev-ref HEAD
 
-    Write-Host " [" -ForegroundColor "Yellow" -NoNewline 
-    if ($branch -eq "HEAD") {
-      # we're probably in detached HEAD state, so print the SHA
-      $branch = git rev-parse --short HEAD
-      Write-Host "$branch" -ForegroundColor "Red" -NoNewline 
-    } else {
-      # we're on an actual branch, so print it
-      Write-Host "$branch" -ForegroundColor "Cyan" -NoNewline 
+    if ($branch) {
+      Write-Host " [" -ForegroundColor "Yellow" -NoNewline 
+      if ($branch -eq "HEAD") {
+        # Detached head
+        $branch = git rev-parse --short HEAD
+        Write-Host "$branch" -ForegroundColor "Red" -NoNewline 
+      } else {
+        # Actual branch
+        Write-Host "$branch" -ForegroundColor "Cyan" -NoNewline 
+      }
+      Write-Host "]" -ForegroundColor "Yellow" -NoNewline 
     }
   } catch {
-    # we'll end up here if we're in a newly initiated git repo
+    # When in newly initiated git repo
     Write-Host "no branches" -ForegroundColor "Yellow" -NoNewline 
+    Write-Host "]" -ForegroundColor "Yellow" -NoNewline 
   }
-
-  Write-Host "]" -ForegroundColor "Yellow" -NoNewline 
 }
 
 # Lazy (or deferred) load slow modules below.
