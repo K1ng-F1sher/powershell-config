@@ -10,8 +10,9 @@ foreach ($package in $check_installed) {
 }
 
 # Aliases
-Set-Alias -Name vim -Value nvim
-Set-Alias -Name ex -Value explorer
+Set-Alias -Name vim   -Value nvim
+Set-Alias -Name ex    -Value explorer
+Set-Alias -Name fe    -Value FindFile # See function `FindFile` below.
 
 # Carapace options
 Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
@@ -30,3 +31,8 @@ Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t'
 # Init zoxide in PS, then set alias.
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 Set-Alias -Name cd -Value z -Option AllScope
+
+# Create a function to trigger fzf from the current directory to bind to `fe`: 'Find Everything'.
+function FindFile {
+  Get-ChildItem . -Recurse -Attributes !Directory | Invoke-Fzf | ForEach-Object { nvim $_ }
+}
