@@ -17,13 +17,17 @@ function Get-GitStatus {
 }
 New-Alias -Name gs -Value Get-GitStatus
 function Set-GitAdd {
-    & git add . 
+    & git add $args
 }
 New-Alias -Name ga -Value Set-GitAdd
 function Set-GitCommit {
-    & git commit $args 
+    & git commit -m $args 
 }
 New-Alias -Name gc -Value Set-GitCommit -Force # Force to override existing `gc` -> Get-Content
+function Set-GitQuickCommit {
+    & git commit -am $args 
+}
+New-Alias -Name gq -Value Set-GitQuickCommit 
 function Set-GitPush {
     & git push
 }
