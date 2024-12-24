@@ -11,8 +11,8 @@ foreach ($package in $check_installed) {
 
 # Aliases
 Set-Alias -Name ex -Value explorer
-Set-Alias -Name g -Value git -Opti
 Set-Alias -Name fe -Value FindFile # See function `FindFile` below.
+Set-Alias -Name g -Value git -Option AllScope
 function Get-GitStatus {
   & git status $args 
 }
@@ -32,7 +32,7 @@ New-Alias -Name gq -Value Set-GitQuickCommit -Option AllScope
 function Set-GitPush {
   & git push 
 }
-New-Alias -Name gp -Value Set-GitPush -Option AllScope
+New-Alias -Name gp -Value Set-GitPush -Force -Option AllScope
 function Get-GitCheckout {
   & git checkout $args 
 }
