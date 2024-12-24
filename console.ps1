@@ -4,38 +4,47 @@ $check_installed = "choco.exe","git.exe","rg.exe","nvim.exe", "jq.exe", "zoxide.
 # carapace, PsFzf are installed with scoop
 
 foreach ($package in $check_installed) {
-    if (!(Get-Command -Name $package -ErrorAction SilentlyContinue)) {
-        Write-Host "$($package) not available"
-    }
+  if (!(Get-Command -Name $package -ErrorAction SilentlyContinue)) {
+    Write-Host "$($package) not available"
+  }
 }
 
 # Aliases
 Set-Alias -Name vim -Value nvim
 Set-Alias -Name ex -Value explorer
+Set-Alias -Name g -Value git -Option AllScope
 function Get-GitStatus {
-    & git status $args 
+  & git status $args 
 }
-New-Alias -Name gs -Value Get-GitStatus
+New-Alias -Name gs -Value Get-GitStatus -Option AllScope
 function Set-GitAdd {
-    & git add $args
+  & git add . 
 }
-New-Alias -Name ga -Value Set-GitAdd
+New-Alias -Name ga -Value Set-GitAdd -Option AllScope
 function Set-GitCommit {
-    & git commit -m $args 
+  & git commit -m $args 
 }
-New-Alias -Name gc -Value Set-GitCommit -Force # Force to override existing `gc` -> Get-Content
+New-Alias -Name gc -Value Set-GitCommit -Option AllScope -Force # Force to override existing `gc` -> Get-Content
 function Set-GitQuickCommit {
-    & git commit -am $args 
+  & git commit -am $args 
 }
-New-Alias -Name gq -Value Set-GitQuickCommit 
+New-Alias -Name gq -Value Set-GitQuickCommit -Option AllScope
 function Set-GitPush {
-    & git push
+  & git push 
 }
-New-Alias -Name gp -Value Set-GitPush
+New-Alias -Name gp -Value Set-GitPush -Option AllScope
 function Get-GitCheckout {
-    & git checkout $args 
+  & git checkout $args 
 }
 New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
+function Get-GitLog {
+  & git log --all --graph --decorate --oneline 
+}
+New-Alias -Name gl -Value Get-GitLog -Force -Option AllScope
+function Get-GitBranch {
+  & git branch $args 
+}
+New-Alias -Name gb -Value Get-GitBranch -Force -Option AllScope
 
 # Carapace options
 Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
