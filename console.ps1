@@ -21,9 +21,17 @@ function Set-GitAdd {
 }
 New-Alias -Name ga -Value Set-GitAdd
 function Set-GitCommit {
-    & git commit -am $args 
+    & git commit $args 
 }
 New-Alias -Name gc -Value Set-GitCommit -Force # Force to override existing `gc` -> Get-Content
+function Set-GitPush {
+    & git push
+}
+New-Alias -Name gp -Value Set-GitPush
+function Get-GitCheckout {
+    & git checkout $args 
+}
+New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
 
 # Carapace options
 Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
