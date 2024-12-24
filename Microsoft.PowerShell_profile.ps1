@@ -54,6 +54,8 @@ function Write-BranchName {
   }
 }
 
+$env:TERM='xterm-256color'
+
 # Lazy (or deferred) load slow modules below.
 # All code below is copied from:
 # https://fsackur.github.io/2023/11/20/Deferred-profile-loading-for-better-performance/

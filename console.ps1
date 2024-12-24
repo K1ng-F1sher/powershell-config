@@ -4,14 +4,26 @@ $check_installed = "choco.exe","git.exe","rg.exe","nvim.exe", "jq.exe", "zoxide.
 # carapace, PsFzf are installed with scoop
 
 foreach ($package in $check_installed) {
-  if (!(Get-Command -Name $package -ErrorAction SilentlyContinue)) {
-    Write-Host "$($package) not available"
-  }
+    if (!(Get-Command -Name $package -ErrorAction SilentlyContinue)) {
+        Write-Host "$($package) not available"
+    }
 }
 
 # Aliases
 Set-Alias -Name vim -Value nvim
 Set-Alias -Name ex -Value explorer
+function Get-GitStatus {
+    & git status $args 
+}
+New-Alias -Name gs -Value Get-GitStatus
+function Set-GitAdd {
+    & git add . 
+}
+New-Alias -Name ga -Value Set-GitAdd
+function Set-GitCommit {
+    & git commit -am $args 
+}
+New-Alias -Name gc -Value Set-GitCommit -Force # Force to override existing `gc` -> Get-Content
 
 # Carapace options
 Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
