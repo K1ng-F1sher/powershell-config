@@ -10,6 +10,7 @@ foreach ($package in $check_installed) {
 }
 
 # Aliases
+Set-Alias -Name vim -Value nvim
 Set-Alias -Name ex -Value explorer
 Set-Alias -Name fe -Value FindFile # See function `FindFile` below.
 Set-Alias -Name g -Value git -Option AllScope
@@ -29,6 +30,10 @@ function Set-GitQuickCommit {
   & git commit -am $args 
 }
 New-Alias -Name gq -Value Set-GitQuickCommit -Option AllScope
+function Set-GitPull {
+  & git pull 
+}
+New-Alias -Name gl -Value Set-GitPull -Force -Option AllScope
 function Set-GitPush {
   & git push 
 }
@@ -37,10 +42,10 @@ function Get-GitCheckout {
   & git checkout $args 
 }
 New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
-function Get-GitLog {
+function Get-GitTree {
   & git log --all --graph --decorate --oneline 
 }
-New-Alias -Name gl -Value Get-GitLog -Force -Option AllScope
+New-Alias -Name gt -Value Get-GitTree -Force -Option AllScope
 function Get-GitBranch {
   & git branch $args 
 }
