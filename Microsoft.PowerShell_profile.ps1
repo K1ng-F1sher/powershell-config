@@ -7,7 +7,19 @@ function prompt {
   }
 
   $date = Get-Date -format 'HH:mm:ss'
-  $loc = $executionContext.SessionState.Path.CurrentLocation;
+
+  # Smart path
+  $loc = Split-Path -leaf -path (Split-Path -parent -path ($executionContext.SessionState.Path.CurrentLocation));
+  if (Split-Path -parent -path (Split-Path -parent -path ($executionContext.SessionState.Path.CurrentLocation))) {
+    $loc = "..\" + $loc;
+  }
+  if (!$loc) {
+    $loc = Split-Path -leaf -path ($executionContext.SessionState.Path.CurrentLocation);
+  } else {
+    $loc = $loc.TrimEnd("\")
+    $loc += "\"
+    $loc += Split-Path -leaf -path ($executionContext.SessionState.Path.CurrentLocation);
+  }
 
   $host.UI.RawUI.WindowTitle = $IsAdmin ? "PS7 [ADMIN] | " : "PS7 | "; 
   $host.UI.RawUI.WindowTitle += $loc 
