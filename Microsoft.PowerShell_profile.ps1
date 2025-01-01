@@ -8,28 +8,29 @@ function prompt {
 
   $date = Get-Date -format 'HH:mm:ss'
 
+  $loc = $executionContext.SessionState.Path.CurrentLocation;
   # Smart path
-  $loc = Split-Path -leaf -path (Split-Path -parent -path ($executionContext.SessionState.Path.CurrentLocation));
-  if (Split-Path -parent -path (Split-Path -parent -path ($executionContext.SessionState.Path.CurrentLocation))) {
-    $loc = "..\" + $loc;
+  $shortLoc = Split-Path -leaf -path (Split-Path -parent -path ($loc));
+  if (Split-Path -parent -path (Split-Path -parent -path ($loc))) {
+    $shortLoc = "..\" + $shortLoc;
   }
-  if (!$loc) {
-    $loc = Split-Path -leaf -path ($executionContext.SessionState.Path.CurrentLocation);
+  if (!$shortLoc) {
+    $shortLoc = Split-Path -leaf -path ($loc);
   } else {
-    $loc = $loc.TrimEnd("\")
-    $loc += "\"
-    $loc += Split-Path -leaf -path ($executionContext.SessionState.Path.CurrentLocation);
+    $shortLoc = $shortLoc.TrimEnd("\")
+    $shortLoc += "\"
+    $shortLoc += Split-Path -leaf -path ($loc);
   }
 
   $host.UI.RawUI.WindowTitle = $IsAdmin ? "PS7 [ADMIN] | " : "PS7 | "; 
-  $host.UI.RawUI.WindowTitle += $loc 
+  $host.UI.RawUI.WindowTitle += $shortLoc 
 
   Write-Host $date -NoNewLine -ForegroundColor "DarkYellow"
   # Set the path in the prompt (invisible), so <C-S-d> and <Alt-S-+> work.
   if ($loc.Provider.Name -eq "FileSystem") {
     Write-Host "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\" -NoNewLine 
   }
-  Write-Host " $loc" -NoNewLine -ForegroundColor "DarkGray"
+  Write-Host " $shortLoc" -NoNewLine -ForegroundColor "DarkGray"
   Write-BranchName
   Write-Host $('>' * ($nestedPromptLevel + 1)) -NoNewLine 
 
