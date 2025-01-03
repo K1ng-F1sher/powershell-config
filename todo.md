@@ -1,12 +1,12 @@
 # To do
 - Separate getting git branch from writing the prompt, so it doesn't 'jump'
-- Use smart path to shorten elongated paths in prompt
 - Add git diff view:
     	- https://github.com/dandavison/delta
     	- Diff view (posh?)
 - Add terminal settings (Ctrl+,) to git
 
 # Done (in reverse chronological order)
+- Use smart path to shorten elongated paths in prompt
 - Added git aliases for quickly executing git actions
 - Installed [PsFzf](https://github.com/kelleyma49/PSFzf?tab=readme-ov-file) with `scoop install psfzf`
 - Added deferred loading [ref](https://fsackur.github.io/2023/11/20/Deferred-profile-loading-for-better-performance/)
