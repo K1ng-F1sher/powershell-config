@@ -29,6 +29,10 @@ function Set-GitCommit {
   & git commit -m $args 
 }
 New-Alias -Name gc -Value Set-GitCommit -Option AllScope -Force # Force to override existing `gc` -> Get-Content
+function Set-GitRestore {
+  & git restore $args 
+}
+New-Alias -Name gr -Value Set-GitRestore -Option AllScope -Force
 function Set-GitQuickCommit {
   & git commit -am $args 
 }
