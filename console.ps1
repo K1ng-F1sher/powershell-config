@@ -41,6 +41,10 @@ function Set-GitPush {
   & git push 
 }
 New-Alias -Name gp -Value Set-GitPush -Force -Option AllScope
+function Set-GitFetch {
+  & git fetch 
+}
+New-Alias -Name gf -Value Set-GitFetch -Force -Option AllScope
 function Get-GitCheckout {
   & git checkout $args 
 }
