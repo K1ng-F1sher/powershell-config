@@ -125,7 +125,7 @@ function Get-GitCheckout {
 }
 New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
 function Get-GitTree {
-  & git log --all --graph --decorate --oneline 
+  & git log --all --graph --decorate $args
 }
 New-Alias -Name gt -Value Get-GitTree -Force -Option AllScope
 function Get-GitBranch {
