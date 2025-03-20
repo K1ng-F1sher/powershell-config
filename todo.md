@@ -1,12 +1,12 @@
 # To do
 
-- Separate getting git branch from writing the prompt, so it doesn't 'jump'
 - Check if carapace can work with aliases, escpecially with git `gco`.
-- Add git diff view: - https://github.com/dandavison/delta - Diff view (posh?)
 - Add terminal settings (Ctrl+,) to git
 
 # Done (in reverse chronological order)
 
+- Decided not to add git diff view: 
+    - https://github.com/dandavison/delta - Diff view (posh?)
 - Removed deferred loading. Too many errors during initializing.
 - Use smart path to shorten elongated paths in prompt
 - Added git aliases for quickly executing git actions
