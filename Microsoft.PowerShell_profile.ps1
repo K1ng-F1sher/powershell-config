@@ -100,6 +100,10 @@ function Set-GitCommit {
   & git commit -m $args 
 }
 New-Alias -Name gc -Value Set-GitCommit -Option AllScope -Force # Force to override existing `gc` -> Get-Content
+function Set-GitDiff {
+  & git diff $args
+}
+New-Alias -Name gd -Value Set-GitDiff -Option AllScope -Force
 function Set-GitRestore {
   & git restore $args 
 }
@@ -132,6 +136,10 @@ function Get-GitBranch {
   & git branch $args 
 }
 New-Alias -Name gb -Value Get-GitBranch -Force -Option AllScope
+function Clean-Local-Branches {
+  & git fetch -p && git branch -vv | awk '!/\*/' | awk '/: gone]/{print $1}'
+  }
+New-Alias -Name gclb -Value Clean-Local-Branches -Force -Option AllScope
 
 # Carapace options
 Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
