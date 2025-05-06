@@ -9,7 +9,7 @@ function prompt {
     Write-Host "# " -NoNewline -ForegroundColor Red
   }
 
-  $date = Get-Date -format 'HH:mm:ss'
+    $date = Get-Date -format 'HH:mm:ss'
 
   $loc = $executionContext.SessionState.Path.CurrentLocation;
   # Smart path
