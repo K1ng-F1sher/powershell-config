@@ -1,5 +1,6 @@
 # To do
 
+- Fix displaying the current location when it's C:\ for example.
 - Add [this top answer](https://stackoverflow.com/questions/1057564/pretty-git-branch-graphs) as an alias.
 - Check out [yazi file explorer](https://github.com/sxyazi/yazi).
 - Check if carapace can work with aliases, escpecially with git `gco`.
