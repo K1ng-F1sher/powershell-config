@@ -146,9 +146,11 @@ function Get-GitCheckout {
       return
     }
     elseif ($gitAhead) {
-      Write-Output ("Your branch is ahead of remote '{0}'." -f $output.Split("'")[1])
+      Write-Output ("Your branch is ahead of remote '{0}'. Push to update remote." -f $output.Split("'")[1])
     }
-    Write-Output "Run git status to see actual status"
+    else {
+      Write-Output "Run git status to see actual status"
+    }
   }
 }
 New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
