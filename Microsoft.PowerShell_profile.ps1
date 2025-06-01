@@ -152,6 +152,9 @@ function Get-GitCheckout {
       Write-Output "Run git status to see actual status"
     }
   }
+  else {
+    Write-Output $output
+  }
 }
 New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
 function Get-GitTree {
