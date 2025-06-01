@@ -12,7 +12,7 @@ function prompt {
     $date = Get-Date -format 'HH:mm:ss'
 
   $loc = $executionContext.SessionState.Path.CurrentLocation;
-  # Smart path
+  # Show smart path, which is only the last two folders.
   try {
     $shortLoc = Split-Path -leaf -path (Split-Path -parent -path ($loc));
     if (Split-Path -parent -path (Split-Path -parent -path ($loc))) {
@@ -130,7 +130,18 @@ function Set-GitFetch {
 }
 New-Alias -Name gf -Value Set-GitFetch -Force -Option AllScope
 function Get-GitCheckout {
-  & git checkout $args 
+  $output = & git checkout $args | Out-String
+  if ($output.StartsWith("Your branch is")) {
+    Write-Output "Checking for updates.."
+    git fetch 
+    $gitBehind = cmd.exe /c 'git status | find /i "Your branch is behind"'
+    if ($gitBehind) {
+      Write-Output ("Your branch is behind on remote '{0}'." -f $output.Split("'")[1])
+    }
+    else {
+      Write-Output ("Your branch is up to date with remote '{0}'." -f $output.Split("'")[1])
+    }
+  }
 }
 New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
 function Get-GitTree {
