@@ -13,16 +13,21 @@ function prompt {
 
   $loc = $executionContext.SessionState.Path.CurrentLocation;
   # Smart path
-  $shortLoc = Split-Path -leaf -path (Split-Path -parent -path ($loc));
-  if (Split-Path -parent -path (Split-Path -parent -path ($loc))) {
-    $shortLoc = "..\" + $shortLoc;
+  try {
+    $shortLoc = Split-Path -leaf -path (Split-Path -parent -path ($loc));
+    if (Split-Path -parent -path (Split-Path -parent -path ($loc))) {
+      $shortLoc = "..\" + $shortLoc;
+    }
+    if (!$shortLoc) {
+      $shortLoc = Split-Path -leaf -path ($loc);
+    } else {
+      $shortLoc = $shortLoc.TrimEnd("\")
+      $shortLoc += "\"
+      $shortLoc += Split-Path -leaf -path ($loc);
+    }
   }
-  if (!$shortLoc) {
-    $shortLoc = Split-Path -leaf -path ($loc);
-  } else {
-    $shortLoc = $shortLoc.TrimEnd("\")
-    $shortLoc += "\"
-    $shortLoc += Split-Path -leaf -path ($loc);
+  catch {
+    $shortLoc = $loc;
   }
 
   $host.UI.RawUI.WindowTitle = $IsAdmin ? "PS7 [ADMIN] | " : "PS7 | "; 
