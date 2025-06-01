@@ -146,7 +146,7 @@ function Get-GitCheckout {
       return
     }
     elseif ($gitAhead) {
-      Write-Output ($output)
+      Write-Output ($output.Split([Environment]::NewLine) | Select -First 1)
     }
     else {
       Write-Output "Run git status to see actual status"
