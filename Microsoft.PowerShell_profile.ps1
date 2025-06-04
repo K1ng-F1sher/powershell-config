@@ -134,23 +134,7 @@ function Get-GitCheckout {
   if ($output.StartsWith("Your branch is")) {
     Write-Output "Checking for updates.."
     git fetch 
-    $gitBehind = cmd.exe /c 'git status | find /i "Your branch is behind"'
-    $gitNormal = cmd.exe /c 'git status | find /i "Your branch is up to date with"'
-    $gitAhead = cmd.exe /c 'git status | find /i "Your branch is ahead"'
-    if ($gitBehind) {
-      Write-Output ("Your branch is behind on remote '{0}'." -f $output.Split("'")[1])
-      return
-    }
-    elseif ($gitNormal) {
-      Write-Output ("Your branch is up to date with remote '{0}'." -f $output.Split("'")[1])
-      return
-    }
-    elseif ($gitAhead) {
-      Write-Output ($output.Split([Environment]::NewLine) | Select -First 1)
-    }
-    else {
-      Write-Output "Run git status to see actual status"
-    }
+    git status
   }
   else {
     Write-Output $output
