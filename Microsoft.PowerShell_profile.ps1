@@ -89,6 +89,7 @@ foreach ($package in $check_installed) {
 }
 
 # Aliases
+Set-Alias -Name w -Value wezterm
 Set-Alias -Name vim -Value nvim
 Set-Alias -Name ex -Value explorer
 Set-Alias -Name fe -Value FindFile # See function `FindFile` below.
@@ -153,6 +154,11 @@ function Clean-Local-Branches {
   & git fetch -p && git branch -vv | awk '!/\*/' | awk '/: gone]/{print $1}'
   }
 New-Alias -Name gclb -Value Clean-Local-Branches -Force -Option AllScope
+
+function Show-Passwords {
+  (netsh wlan show profiles) | Select-String “\:(.+)$” | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name=”$name” key=clear)} | Select-String “Key Content\W+\:(.+)$” | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
+}
+New-Alias -Name pw -Value Show-Passwords
 
 # Carapace options
 Set-PSReadLineOption -Colors @{ "Selection" = "`e[7m" }
