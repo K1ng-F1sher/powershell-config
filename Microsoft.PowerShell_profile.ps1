@@ -89,47 +89,55 @@ foreach ($package in $check_installed) {
 }
 
 # Aliases
-Set-Alias -Name w -Value wezterm
-Set-Alias -Name vim -Value nvim
 Set-Alias -Name ex -Value explorer
-Set-Alias -Name fe -Value FindFile # See function `FindFile` below.
 Set-Alias -Name g -Value git -Option AllScope
+Set-Alias -Name vim -Value nvim
+
+# Create a function to trigger fzf from the current directory to bind to `fe`: 'Find Everything'.
+function FindFile {
+  Get-ChildItem . -Recurse -Attributes !Directory | Invoke-Fzf | ForEach-Object { nvim $_ }
+}
+Set-Alias -Name fe -Value FindFile 
+function Start-Wezterm-New-Window {
+  Start-Job -ScriptBlock { & wezterm start --cwd $executionContext.SessionState.Path.CurrentLocation } | OUT-NULL 
+}
+Set-Alias -Name w -Value Start-Wezterm-New-Window
 function Get-GitStatus {
   & git status $args 
 }
-New-Alias -Name gs -Value Get-GitStatus -Option AllScope
+Set-Alias -Name gs -Value Get-GitStatus -Option AllScope
 function Set-GitAdd {
   & git add . 
 }
-New-Alias -Name ga -Value Set-GitAdd -Option AllScope
+Set-Alias -Name ga -Value Set-GitAdd -Option AllScope
 function Set-GitCommit {
   & git commit -m $args 
 }
-New-Alias -Name gc -Value Set-GitCommit -Option AllScope -Force # Force to override existing `gc` -> Get-Content
+Set-Alias -Name gc -Value Set-GitCommit -Option AllScope -Force # Force to override existing `gc` -> Get-Content
 function Set-GitDiff {
   & git diff $args
 }
-New-Alias -Name gd -Value Set-GitDiff -Option AllScope -Force
+Set-Alias -Name gd -Value Set-GitDiff -Option AllScope -Force
 function Set-GitRestore {
   & git restore $args 
 }
-New-Alias -Name gr -Value Set-GitRestore -Option AllScope -Force
+Set-Alias -Name gr -Value Set-GitRestore -Option AllScope -Force
 function Set-GitQuickCommit {
   & git commit -am $args 
 }
-New-Alias -Name gq -Value Set-GitQuickCommit -Option AllScope
+Set-Alias -Name gq -Value Set-GitQuickCommit -Option AllScope
 function Set-GitPull {
   & git pull 
 }
-New-Alias -Name gl -Value Set-GitPull -Force -Option AllScope
+Set-Alias -Name gl -Value Set-GitPull -Force -Option AllScope
 function Set-GitPush {
   & git push 
 }
-New-Alias -Name gp -Value Set-GitPush -Force -Option AllScope
+Set-Alias -Name gp -Value Set-GitPush -Force -Option AllScope
 function Set-GitFetch {
   & git fetch 
 }
-New-Alias -Name gf -Value Set-GitFetch -Force -Option AllScope
+Set-Alias -Name gf -Value Set-GitFetch -Force -Option AllScope
 function Get-GitCheckout {
   $output = & git checkout $args | Out-String
   if ($output.StartsWith("Your branch is")) {
@@ -141,19 +149,19 @@ function Get-GitCheckout {
     Write-Output $output
   }
 }
-New-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
+Set-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
 function Get-GitTree {
   & git log --all --graph --decorate $args
 }
-New-Alias -Name gt -Value Get-GitTree -Force -Option AllScope
+Set-Alias -Name gt -Value Get-GitTree -Force -Option AllScope
 function Get-GitBranch {
   & git branch $args 
 }
-New-Alias -Name gb -Value Get-GitBranch -Force -Option AllScope
+Set-Alias -Name gb -Value Get-GitBranch -Force -Option AllScope
 function Clean-Local-Branches {
   & git fetch -p && git branch -vv | awk '!/\*/' | awk '/: gone]/{print $1}'
   }
-New-Alias -Name gclb -Value Clean-Local-Branches -Force -Option AllScope
+Set-Alias -Name gclb -Value Clean-Local-Branches -Force -Option AllScope
 
 function GetWifiPasswords {
   Write-Output "Getting passwords, this may take a few seconds.."
@@ -177,17 +185,6 @@ Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t'
 # Init zoxide in PS, then set alias.
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 Set-Alias -Name cd -Value z -Option AllScope
-# Open PS fzf with <C-t>
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' 
-
-# Init zoxide in PS, then set alias.
-Invoke-Expression (& { (zoxide init powershell | Out-String) })
-Set-Alias -Name cd -Value z -Option AllScope
-
-# Create a function to trigger fzf from the current directory to bind to `fe`: 'Find Everything'.
-function FindFile {
-  Get-ChildItem . -Recurse -Attributes !Directory | Invoke-Fzf | ForEach-Object { nvim $_ }
-}
 
 #region Smart Insert/Delete
 
