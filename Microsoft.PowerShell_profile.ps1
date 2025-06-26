@@ -6,7 +6,7 @@ function prompt {
   $IsAdmin = IsAdmin
 
   if ($IsAdmin) {
-    Write-Host "# " -NoNewline -ForegroundColor Red
+    Write-Host "[ADMIN] " -NoNewline -ForegroundColor Red
   }
 
     $date = Get-Date -format 'HH:mm:ss'
