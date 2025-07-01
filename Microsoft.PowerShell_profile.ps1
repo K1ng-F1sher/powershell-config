@@ -11,34 +11,39 @@ function prompt {
 
     $date = Get-Date -format 'HH:mm:ss'
 
-  $loc = $executionContext.SessionState.Path.CurrentLocation;
+  $currentLocation = $executionContext.SessionState.Path.CurrentLocation;
   # Show smart path, which is only the last two folders.
   try {
-    $shortLoc = Split-Path -leaf -path (Split-Path -parent -path ($loc));
-    if (Split-Path -parent -path (Split-Path -parent -path ($loc))) {
+    $shortLoc = Split-Path -leaf -path (Split-Path -parent -path ($currentLocation));
+    if (Split-Path -parent -path (Split-Path -parent -path ($currentLocation))) {
       $shortLoc = "..\" + $shortLoc;
     }
     if (!$shortLoc) {
-      $shortLoc = Split-Path -leaf -path ($loc);
+      $shortLoc = Split-Path -leaf -path ($currentLocation);
     } else {
       $shortLoc = $shortLoc.TrimEnd("\")
       $shortLoc += "\"
-      $shortLoc += Split-Path -leaf -path ($loc);
+      $shortLoc += Split-Path -leaf -path ($currentLocation);
     }
   }
   catch {
-    $shortLoc = $loc;
+    $shortLoc = $currentLocation;
   }
 
   $host.UI.RawUI.WindowTitle = $IsAdmin ? "PS7 [ADMIN] | " : "PS7 | "; 
   $host.UI.RawUI.WindowTitle += $shortLoc 
 
   Write-Host $date -NoNewLine -ForegroundColor "DarkYellow"
-  # Set the path in the prompt (invisible), so <C-S-d> and <Alt-S-+> work.
-  if ($loc.Provider.Name -eq "FileSystem") {
-    Write-Host "$([char]27)]9;9;`"$($loc.ProviderPath)`"$([char]27)\" -NoNewLine 
+
+  $osc7 = ""
+  if ($currentLocation.Provider.Name -eq "FileSystem") {
+    # Set the path in the prompt (invisible), so <C-S-d> and <Alt-S-+> work.
+    $ansi_escape = [char]27
+    $provider_path = $currentLocation.ProviderPath -Replace "\\", "/"
+    $osc7 = "$ansi_escape]7;file://${env:COMPUTERNAME}/${provider_path}${ansi_escape}\"
   }
-  Write-Host " $shortLoc" -NoNewLine -ForegroundColor "DarkGray"
+
+  Write-Host "${osc7} ${shortLoc}" -NoNewLine -ForegroundColor "DarkGray"
   Write-BranchName
   Write-Host $('>' * ($nestedPromptLevel + 1)) -NoNewLine 
 
@@ -99,7 +104,7 @@ function FindFile {
 }
 Set-Alias -Name fe -Value FindFile 
 function Start-Wezterm-New-Window {
-  Start-Job -ScriptBlock { & wezterm start --cwd $executionContext.SessionState.Path.CurrentLocation } | OUT-NULL 
+  Start-Job -ScriptBlock { & wezterm start --cwd $executionContext.SessionState.Path.CurrentLocation --always-new-process } | OUT-NULL 
 }
 Set-Alias -Name w -Value Start-Wezterm-New-Window
 function Get-GitStatus {
