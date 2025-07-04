@@ -97,6 +97,7 @@ foreach ($package in $check_installed) {
 Set-Alias -Name ex -Value explorer
 Set-Alias -Name g -Value git -Option AllScope
 Set-Alias -Name vim -Value nvim
+Set-Alias -Name y -Value yazi
 
 # Create a function to trigger fzf from the current directory to bind to `fe`: 'Find Everything'.
 function FindFile {
