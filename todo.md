@@ -1,10 +1,9 @@
 # To do
 
 - When switching branch with git, check whether the branch is actually up to date.
-    - Implemented on a separate branch. Test it out.
+  - Implemented on a separate branch. Test it out.
 - Check out [yazi file explorer](https://github.com/sxyazi/yazi).
 - Check if carapace can work with aliases, escpecially with git `gco`.
-- Add terminal settings (Ctrl+,) to git
 
 # Done (in reverse chronological order)
 

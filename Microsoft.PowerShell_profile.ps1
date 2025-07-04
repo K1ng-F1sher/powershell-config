@@ -179,7 +179,9 @@ Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 carapace _carapace | Out-String | Invoke-Expression
 
 # Show history. History mode has two options: predition and listview. It can be toggled with `F2`.
-Set-PSReadLineOption -PredictionViewStyle ListView
+try {
+  Set-PSReadLineOption -PredictionViewStyle ListView
+} catch {}
 # Scroll through history suggestions with `Ctrl+n` and `Ctrl+p` key combinations.
 Set-PSReadLineKeyHandler -Chord Ctrl+n -Function NextHistory 
 Set-PSReadLineKeyHandler -Chord Ctrl+p -Function PreviousHistory 
