@@ -107,6 +107,10 @@ function Start-Wezterm-New-Window {
   Start-Job -ScriptBlock { & wezterm start --cwd $executionContext.SessionState.Path.CurrentLocation --always-new-process } | OUT-NULL 
 }
 Set-Alias -Name w -Value Start-Wezterm-New-Window
+function Start-Wezterm-New-Window-Admin {
+    Start-Process wezterm -Verb RunAs -ArgumentList "start", "--cwd", $executionContext.SessionState.Path.CurrentLocation 
+}
+Set-Alias -Name wa -Value Start-Wezterm-New-Window-Admin
 function Get-GitStatus {
   & git status $args 
 }
