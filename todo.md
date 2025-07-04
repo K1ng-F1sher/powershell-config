@@ -1,12 +1,12 @@
 # To do
 
-- When switching branch with git, check whether the branch is actually up to date.
-  - Implemented on a separate branch. Test it out.
+- Make an alias that spawns a new wezterm windows as administrator. Or see if sudo for windows works.
 - Check out [yazi file explorer](https://github.com/sxyazi/yazi).
 - Check if carapace can work with aliases, escpecially with git `gco`.
 
 # Done (in reverse chronological order)
 
+- When switching branch with git, check whether the branch is actually up to date.
 - Fix displaying the current location when it's C:\ for example.
 - Decided not to add git diff view:
   - https://github.com/dandavison/delta - Diff view (posh?)
