@@ -97,7 +97,16 @@ foreach ($package in $check_installed) {
 Set-Alias -Name ex -Value explorer
 Set-Alias -Name g -Value git -Option AllScope
 Set-Alias -Name vim -Value nvim
-Set-Alias -Name y -Value yazi
+
+function y {
+    $tmp = [System.IO.Path]::GetTempFileName()
+    yazi $args --cwd-file="$tmp"
+    $cwd = Get-Content -Path $tmp -Encoding UTF8
+    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
+        Set-Location -LiteralPath ([System.IO.Path]::GetFullPath($cwd))
+    }
+    Remove-Item -Path $tmp
+}
 
 # Create a function to trigger fzf from the current directory to bind to `fe`: 'Find Everything'.
 function FindFile {
