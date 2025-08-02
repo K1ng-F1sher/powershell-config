@@ -95,7 +95,6 @@ foreach ($package in $check_installed) {
 
 # Aliases
 Set-Alias -Name ex -Value explorer
-Set-Alias -Name g -Value git -Option AllScope
 Set-Alias -Name vim -Value nvim
 
 function y {
@@ -121,42 +120,7 @@ function Start-Wezterm-New-Window-Admin {
     Start-Process wezterm -Verb RunAs -ArgumentList "start", "--cwd", $executionContext.SessionState.Path.CurrentLocation 
 }
 Set-Alias -Name wa -Value Start-Wezterm-New-Window-Admin
-function Get-GitStatus {
-  & git status $args 
-}
-Set-Alias -Name gs -Value Get-GitStatus -Option AllScope
-function Set-GitAdd {
-  & git add . 
-}
-Set-Alias -Name ga -Value Set-GitAdd -Option AllScope
-function Set-GitCommit {
-  & git commit -m $args 
-}
-Set-Alias -Name gc -Value Set-GitCommit -Option AllScope -Force # Force to override existing `gc` -> Get-Content
-function Set-GitDiff {
-  & git diff $args
-}
-Set-Alias -Name gd -Value Set-GitDiff -Option AllScope -Force
-function Set-GitRestore {
-  & git restore $args 
-}
-Set-Alias -Name gr -Value Set-GitRestore -Option AllScope -Force
-function Set-GitQuickCommit {
-  & git commit -am $args 
-}
-Set-Alias -Name gq -Value Set-GitQuickCommit -Option AllScope
-function Set-GitPull {
-  & git pull 
-}
-Set-Alias -Name gl -Value Set-GitPull -Force -Option AllScope
-function Set-GitPush {
-  & git push 
-}
-Set-Alias -Name gp -Value Set-GitPush -Force -Option AllScope
-function Set-GitFetch {
-  & git fetch 
-}
-Set-Alias -Name gf -Value Set-GitFetch -Force -Option AllScope
+# TODO: make a (git) alias for this function
 function Get-GitCheckout {
   $output = & git checkout $args | Out-String
   if ($output.StartsWith("Your branch is")) {
@@ -168,15 +132,6 @@ function Get-GitCheckout {
     Write-Output $output
   }
 }
-Set-Alias -Name gco -Value Get-GitCheckout -Force -Option AllScope
-function Get-GitTree {
-  & git log --all --graph --decorate $args
-}
-Set-Alias -Name gt -Value Get-GitTree -Force -Option AllScope
-function Get-GitBranch {
-  & git branch $args 
-}
-Set-Alias -Name gb -Value Get-GitBranch -Force -Option AllScope
 function Clean-Local-Branches {
   & git fetch -p && git branch -vv | awk '!/\*/' | awk '/: gone]/{print $1}'
   }

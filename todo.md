@@ -1,11 +1,11 @@
 # To do
 
 - Make an alias that spawns a new wezterm windows as administrator. Or see if sudo for windows works.
-- Check out [yazi file explorer](https://github.com/sxyazi/yazi).
-- Check if carapace can work with aliases, escpecially with git `gco`.
+- TODO: make a (git) alias for git checkout that also executes a `git status`.
 
 # Done (in reverse chronological order)
 
+- Installed yazi.
 - When switching branch with git, check whether the branch is actually up to date.
 - Fix displaying the current location when it's C:\ for example.
 - Decided not to add git diff view:
